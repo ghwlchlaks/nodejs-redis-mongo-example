@@ -7,6 +7,7 @@ const logger = require('morgan');
 const session = require('express-session');
 const connectRedis = require('connect-redis');
 const RedisStore = connectRedis(session);
+const passport = require('passport');
 
 // router files
 const indexRouter = require('./routes/index');
@@ -17,6 +18,7 @@ const mongoRouter = require('./routes/mongoose');
 // config files
 const redis = require('./config/redis');
 const mongoose = require('./config/mongoose');
+const passportConfig = require('./config/passport');
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error'));
@@ -44,6 +46,9 @@ app.use(session({
     client: redis
   })
 }))
+app.use(passport.initialize());
+app.use(passport.session());
+passportConfig();
 
 // default parent routing
 app.use('/', indexRouter);
@@ -59,7 +64,9 @@ app.get('/session/get/:value', sessionRouter);
 
 /* mongo get example */
 app.get('/mongo/get', mongoRouter);
-
+app.post('/mongo/login', mongoRouter);
+app.post('/mongo/signup', mongoRouter);
+app.get('/mongo/logout', mongoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
