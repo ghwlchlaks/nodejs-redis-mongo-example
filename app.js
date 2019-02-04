@@ -1,13 +1,21 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+// modules
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const session = require('express-session');
+const connectRedis = require('connect-redis');
+const RedisStore = connectRedis(session);
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// router files
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
-var app = express();
+// config files
+const redis = require('./config/redis');
+
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -18,6 +26,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  resave: false,
+  saveUninitialized: false,
+  secret: 'session',
+  cookie: { maxAge : 1000 * 60 * 3},
+  store: new RedisStore({
+    client: redis
+  })
+}))
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
