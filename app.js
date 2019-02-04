@@ -12,9 +12,17 @@ const RedisStore = connectRedis(session);
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const sessionRouter = require('./routes/session');
+const mongoRouter = require('./routes/mongoose');
 
 // config files
 const redis = require('./config/redis');
+const mongoose = require('./config/mongoose');
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error'));
+db.once('open', () => {
+  console.log('mongoose connection!');
+});
 
 const app = express();
 
@@ -41,12 +49,17 @@ app.use(session({
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/session', sessionRouter);
+app.use('/mongo', mongoRouter);
 
 /* redis session example */
 // redis session set
 app.get('/session/set/:value', sessionRouter);
 // redis session get
 app.get('/session/get/:value', sessionRouter);
+
+/* mongo get example */
+app.get('/mongo/get', mongoRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

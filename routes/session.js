@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+const mongo = require('../config/mongoose');
+
 /* GET home page. */
 router.get('/', (req, res, next) => {
   res.send('session respond with a resource');
@@ -18,4 +20,5 @@ router.get('/get/:value', (req, res) => {
     res.send('no session value');
   }
 })
+
 module.exports = router;
