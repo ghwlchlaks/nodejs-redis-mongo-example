@@ -11,6 +11,7 @@ const RedisStore = connectRedis(session);
 // router files
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const sessionRouter = require('./routes/session');
 
 // config files
 const redis = require('./config/redis');
@@ -28,7 +29,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   secret: 'session',
   cookie: { maxAge : 1000 * 60 * 3},
   store: new RedisStore({
@@ -36,8 +37,16 @@ app.use(session({
   })
 }))
 
+// default parent routing
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/session', sessionRouter);
+
+/* redis session example */
+// redis session set
+app.get('/session/set/:value', sessionRouter);
+// redis session get
+app.get('/session/get/:value', sessionRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
