@@ -63,9 +63,10 @@ app.get('/session/set/:value', sessionRouter);
 app.get('/session/get/:value', sessionRouter);
 
 /* mongo get example */
-app.post('/mongo/login', mongoRouter);
+app.put('/mongo/login', mongoRouter);
 app.post('/mongo/signup', mongoRouter);
 app.get('/mongo/logout', mongoRouter);
+app.put('/mongo/update', mongoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
