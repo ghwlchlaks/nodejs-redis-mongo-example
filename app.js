@@ -63,7 +63,6 @@ app.get('/session/set/:value', sessionRouter);
 app.get('/session/get/:value', sessionRouter);
 
 /* mongo get example */
-app.get('/mongo/get', mongoRouter);
 app.post('/mongo/login', mongoRouter);
 app.post('/mongo/signup', mongoRouter);
 app.get('/mongo/logout', mongoRouter);

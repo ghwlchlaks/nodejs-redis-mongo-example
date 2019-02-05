@@ -13,12 +13,13 @@ module.exports = () => {
         usernameField: 'username',
         passwordField: 'password',
         session: true,
-        passReqToCallback: false,
-    }, (username, password, done) => {
-        Users.findOne({username: username}, (findError, user) => {
+        passReqToCallback: true,
+    }, (req, username, password, done) => {
+        const userData = req.body;
+        Users.findOne({username: userData.username}, (findError, user) => {
             if (findError) return done(findError);
             if (!user) return done(null, false, {message: '존재하지않는 아이디'});
-            if (!user.comparePassword(password, user.password)) return done(null, false, {message: '비밀번호가 다릅니다.'});
+            if (!user.comparePassword(userData.password, user.password)) return done(null, false, {message: '비밀번호가 다릅니다.'});
             return done(null, user);
         })
     }))
@@ -27,12 +28,13 @@ module.exports = () => {
         passwordField: 'password',
         passReqToCallback: true
     }, (req, username, password, done) => {
-        Users.findOne({username: username}, (findError, user) => {
+        const userData = req.body;
+        Users.findOne({username: userData.username}, (findError, user) => {
             if (findError) return done(findError);
             if (user) return done(null, false, {message: '존재하는 아이디입니다.'});
             const newUser = new Users();
-            newUser.username = username;
-            newUser.password = newUser.generateHash(password);
+            newUser.username = userData.username;
+            newUser.password = newUser.generateHash(userData.password);
             newUser.save((saveError) => {
                 if(saveError) throw saveError;
                 return done(null, newUser);

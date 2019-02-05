@@ -9,28 +9,22 @@ const isAuthentication = (req, res, next) => {
 }
 
 /* GET home page. */
-router.get('/',isAuthentication, (req, res, next) => {
-  res.send('mongo respond with a resource');
+router.get('/',isAuthentication, (req, res) => {
+  res.status(200).send('login success ' + req.user.username);
 });
 
-router.get('/get', (req, res) => {
-  res.send('mongo get');
+router.post('/login', passport.authenticate('login'),
+  (req, res) => {
+  res.status(200).send(req.user.username);
 })
 
-router.post('/login', passport.authenticate('login', {
-  failureRedirect: '/'
-}), (req, res) => {
-  res.redirect('/mongo/get');
-})
-
-router.post('/signup', passport.authenticate('signup', {
-  failureRedirect: '/'
-}), (req, res) => {
-  res.redirect('/mongo/get');
+router.post('/signup', passport.authenticate('signup'),
+ (req, res) => {
+  res.status(200).send(req.user.username);
 })
 
 router.get('/logout', (req, res) => {
   req.logout();
-  res.redirect('/');
+  res.status(200).send('logout success');
 })
 module.exports = router;
